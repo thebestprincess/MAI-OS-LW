@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h> 
 
 #include "../include/validator.h"
 
@@ -71,8 +72,6 @@ int main(int argc, char** argv)
         write(STDIN_FILENO, message, strlen(message));
         exit(EXIT_FAILURE);
     }
-
-
     
     int** arrays = (int**)malloc(ARR_NUMBER * sizeof(int*));
 
@@ -86,7 +85,7 @@ int main(int argc, char** argv)
     // Fill arrays
     char temp_buffer[ARRAY_SIZE];
     long long inter_sum = 0;
-    srand(time(NULL));
+    srand(1);
 
     for (int i = 0; i < ARR_NUMBER; ++i)
     {
@@ -106,6 +105,15 @@ int main(int argc, char** argv)
         }
     }
 
+
+    // Determines the program's wall-time
+    struct timespec start_time, end_time;
+    if (clock_gettime(CLOCK_MONOTONIC, &start_time) != 0)
+    {
+        char* message = "Error: unable to get time for start_time.\n";
+        write(STDIN_FILENO, message, strlen(message));
+        exit(EXIT_FAILURE);
+    }
 
     // Create threads and ThreadInfo for each thread
     pthread_t thread[PTH_NUMBER];
@@ -147,12 +155,22 @@ int main(int argc, char** argv)
         free((void*)result);    // Memory was allocated in void* computing(void* args)
     }
 
+    if (clock_gettime(CLOCK_MONOTONIC, &end_time) != 0)
+    {
+        char* message = "Error: unable to get time for end_time.\n";
+        write(STDIN_FILENO, message, strlen(message));
+        exit(EXIT_FAILURE);
+    }
+    double time_taken = (end_time.tv_sec - start_time.tv_sec) + 
+                        (end_time.tv_nsec - start_time.tv_nsec) / 1000000000.0;
+
     // Output globalSum
-    if (sprintf(temp_buffer, "Global sum is: %lld == %lld :inter_sum\n", globalSum, inter_sum) >= 0)
+    if (sprintf(temp_buffer, "Global sum is: %lld == %lld :inter_sum\nExecution time is: %.5f\n", globalSum, inter_sum, time_taken) >= 0)
     {
         write(STDOUT_FILENO, temp_buffer, strlen(temp_buffer));
     }
-    
+
+
 
     // Free allocated memory
     for (int i = 0; i < ARR_NUMBER; ++i)
