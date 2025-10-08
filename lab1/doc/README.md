@@ -14,7 +14,7 @@ gcc main.c -o main
 gcc child.c -o child
 ```
 
-*IMPORTANT*: child executable expects the child executable to be named `child` and be located near the client, otherwise the child will exit with error!
+*IMPORTANT*: child executable expects the child executable to be named `child` and be located near the parent, otherwise the child will exit with error!
 
 ---
 ### Test files
