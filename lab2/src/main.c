@@ -117,7 +117,13 @@ int main(int argc, char** argv)
 
     // Create threads and ThreadInfo for each thread
     pthread_t thread[PTH_NUMBER];
-    ThreadInfo* threads = malloc(PTH_NUMBER * sizeof(ThreadInfo));
+    ThreadInfo* threads = (ThreadInfo*)malloc(PTH_NUMBER * sizeof(ThreadInfo));
+    if (threads == NULL)
+    {
+        char* message = "Error: unable to get allocate memory for threads.\n";
+        write(STDIN_FILENO, message, strlen(message));
+        exit(EXIT_FAILURE);
+    }
 
     for (int i = 0; i < PTH_NUMBER; ++i)
     {
